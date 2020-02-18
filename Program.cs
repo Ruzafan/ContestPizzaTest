@@ -31,7 +31,7 @@ namespace GoogleContestTest
                 GetNext(values[i], result,i);
             }
 
-            Console.WriteLine(string.Join(", ",result.Keys) +'\n' + result.Values.Sum());
+            Console.WriteLine(result.Count() +' '+ string.Join(" ",result.Keys));
         }
 
         private static void GetNext(int v, Dictionary<long, int> result,long currPos)
