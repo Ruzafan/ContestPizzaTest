@@ -31,7 +31,12 @@ namespace GoogleContestTest
                 GetNext(values[i], result,i);
             }
 
-            Console.WriteLine(result.Count() +' '+ string.Join(" ",result.Keys));
+            string docPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            using (StreamWriter outputFile = new StreamWriter(Path.Combine(docPath, "result.txt")))
+            {
+                outputFile.WriteLine(result.Count());
+                outputFile.WriteLine(string.Join(" ", result.Keys));
+            }
         }
 
         private static void GetNext(int v, Dictionary<long, int> result,long currPos)
