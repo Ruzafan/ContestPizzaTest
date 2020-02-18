@@ -8,7 +8,7 @@ namespace GoogleContestTest
     {
         private static long _maxiumSlices = 0;
         private static long _diferentTypesOfPizza = 0;
-        private static List<long> _sliceQtt = new List<long>();
+        private static int[] _sliceQtt;
 
         static void Main(string[] args)
         {
@@ -29,6 +29,12 @@ namespace GoogleContestTest
             line = file.ReadLine();
             SetVarsLine2(line);
             file.Close();
+
+
+
+
+
+
         }
 
         private static void SetVarsLine1(string line)
@@ -62,8 +68,9 @@ namespace GoogleContestTest
         }
         private static void SetVarsLine2(string line)
         {
-            long qtt = 0;
-
+            int qtt = 0;
+            int count = 0;
+            _sliceQtt = new int[_maxiumSlices];
             string sliceqtt = string.Empty;
             foreach (char c in line)
             {
@@ -74,15 +81,16 @@ namespace GoogleContestTest
                 else if (c != '\n')
                 {
                     qtt = 0;
-                    long.TryParse(sliceqtt, out qtt);
-                    _sliceQtt.Add(qtt);
+                    int.TryParse(sliceqtt, out qtt);
+                    _sliceQtt[count] = qtt;
                     sliceqtt = string.Empty;
                 }
+                count++;
             }
 
             qtt = 0;
-            long.TryParse(sliceqtt, out qtt);
-            _sliceQtt.Add(qtt);
+            int.TryParse(sliceqtt, out qtt);
+            _sliceQtt[count] = qtt;
             sliceqtt = string.Empty;
 
         }
