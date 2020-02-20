@@ -5,4 +5,34 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="HashCode\a_example.txt" />
+    <None Remove="HashCode\b_read_on.txt" />
+    <None Remove="HashCode\c_incunabula.txt" />
+    <None Remove="HashCode\d_tough_choices.txt" />
+    <None Remove="HashCode\e_so_many_books.txt" />
+    <None Remove="HashCode\f_libraries_of_the_world.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="HashCode\a_example.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HashCode\b_read_on.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HashCode\c_incunabula.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HashCode\d_tough_choices.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HashCode\e_so_many_books.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HashCode\f_libraries_of_the_world.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>

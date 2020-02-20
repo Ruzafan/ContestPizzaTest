@@ -31,20 +31,25 @@ namespace GoogleContestFirstRound
                 libObjects = new List<Library>();
                 scoreOfBooks = new Dictionary<long, long>();
 
-                ReadFileAndSetProps(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), $"{item}.txt"));
+                ReadFileAndSetProps(Path.Combine(Environment.CurrentDirectory, "HashCode", $"{item}.txt"));
 
-                var test1 = Test1();
-                WriteTest($"{item}_solution1.txt", test1);
+                //var test1 = Test1();
+                //WriteTest($"{item}_solution1.txt", test1);
 
-                var test2 = Test2();
-                WriteTest($"{item}_solution2.txt", test2);
+                //var test2 = Test2();
+                //WriteTest($"{item}_solution2.txt", test2);
+
+                var test3 = Test3();
+                WriteTest($"{item}_solution3.txt", test3);
             }
         }
 
         private static void WriteTest(string path, string text)
         {
-            string docPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            File.WriteAllText(Path.Combine(docPath, "HashCode", path), text);
+            string docPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "HashCode");
+            if (!Directory.Exists(docPath))
+                Directory.CreateDirectory(docPath);
+            File.WriteAllText(Path.Combine(docPath, path), text);
         }
 
         private static string Test1()
@@ -64,26 +69,6 @@ namespace GoogleContestFirstRound
                 sb.AppendLine($"{library.Id} {library.NumOfBooks}");
                 sb.AppendLine(string.Join(" ", library.Books.Values));
             }
-
-            //var day = 0;
-            //while (day < daysForScanning)
-            //{
-            //    var library = librariesOrdered.FirstOrDefault();
-            //    if (library.IsSignedUp)
-            //    {
-
-            //    }
-            //    else
-            //    {
-            //        library.IsSigningUp = true;
-            //    }
-            //}
-
-            //for (int i = 0; i < daysForScanning; i++)
-            //{
-
-
-            //}
 
             return sb.ToString();
         }
@@ -114,40 +99,47 @@ namespace GoogleContestFirstRound
                 daysSpent += library.SingUpProcesDays;
             }
 
-            //var day = 0;
-            //while (day < daysForScanning)
-            //{
-            //    var library = librariesOrdered.FirstOrDefault(x => x.IsSignedUp);
-
-            //    if (library.IsSignedUp)
-            //    {
-
-            //    }
-            //    else
-            //    {
-            //        library.IsSigningUp = true;
-            //    }
-            //}
-
-            //for (int i = 0; i < daysForScanning; i++)
-            //{
-
-
-            //}
-
             return sb.ToString();
         }
 
-        private static string GetFile(string fileNum)
+        private static string Test3()
         {
-            switch (fileNum)
+            var sb = new StringBuilder();
+
+            var booksReaded = new List<long>();
+
+            sb.AppendLine(libObjects.Count().ToString());
+
+            var librariesOrdered = libObjects.OrderByDescending(x => (x.NumOfBooks * x.BooksPerDay) - x.SingUpProcesDays);
+
+            var booksProcessed = new List<long>();
+
+            var daysSpent = 0;
+
+            foreach (var library in librariesOrdered)
             {
-                case "1":
-                    return Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "/a_example.txt";
-                case "2":
-                    return Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "/b_read_on.txt";
+                //foreach (var processedBook in booksProcessed)
+                //{
+                //    library.Books.Remove(processedBook);
+                //}
+
+                library.Books = library.Books.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
+
+                var booksCanProcess = ((daysForScanning - (daysSpent + library.SingUpProcesDays)) * library.BooksPerDay);
+
+                var books = library.Books.Take((int)booksCanProcess);
+
+                //booksProcessed.AddRange(books.Select(x => x.Key));
+                if (!books.Any()) break;
+                 
+                sb.AppendLine($"{library.Id} {books.Count()}");
+                sb.AppendLine(string.Join(" ", books.Select(x => x.Value)));
+
+                daysSpent += library.SingUpProcesDays;
             }
-            return "";
+
+            sb.Remove(sb.Length - 1, 1);
+            return sb.ToString();
         }
 
         private static void ReadFileAndSetProps(string path)
