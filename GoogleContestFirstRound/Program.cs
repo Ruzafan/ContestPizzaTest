@@ -39,8 +39,14 @@ namespace GoogleContestFirstRound
                 //var test2 = Test2();
                 //WriteTest($"{item}_solution2.txt", test2);
 
-                var test3 = Test3();
-                WriteTest($"{item}_solution3.txt", test3);
+                //var test3 = Test3();
+                //WriteTest($"{item}_solution3.txt", test3);
+
+                var test4 = Test4();
+                WriteTest($"{item}_solution4.txt", test4);
+
+                var test5 = Test5();
+                WriteTest($"{item}_solution5.txt", test5);
             }
         }
 
@@ -130,11 +136,113 @@ namespace GoogleContestFirstRound
                 var books = library.Books.Take((int)booksCanProcess);
 
                 //booksProcessed.AddRange(books.Select(x => x.Key));
-                if (!books.Any()) break;
-                 
-                sb.AppendLine($"{library.Id} {books.Count()}");
-                sb.AppendLine(string.Join(" ", books.Select(x => x.Value)));
+                
+                if (books.Any())
+                {
+                    sb.AppendLine($"{library.Id} {books.Count()}");
+                    sb.AppendLine(string.Join(" ", books.Select(x => x.Value)));
+                }
+                else
+                {
+                    sb.AppendLine($"{library.Id} {library.Books.Count()}");
+                    sb.AppendLine(string.Join(" ", library.Books.Select(x => x.Value)));
+                }
+                daysSpent += library.SingUpProcesDays;
+            }
 
+            sb.Remove(sb.Length - 1, 1);
+            return sb.ToString();
+        }
+
+        private static string Test4()
+        {
+            var sb = new StringBuilder();
+
+            var booksReaded = new List<long>();
+
+            sb.AppendLine(libObjects.Count().ToString());
+
+            var librariesOrdered = libObjects.OrderByDescending(x => ((x.NumOfBooks * x.BooksPerDay) + x.Books.Sum(y => y.Value)) / x.SingUpProcesDays);
+
+            var booksProcessed = new List<long>();
+
+            var daysSpent = 0;
+
+            foreach (var library in librariesOrdered)
+            {
+                var tempBooks = library.Books.ToList().ToDictionary(x => x.Key, x => x.Value);
+
+                foreach (var processedBook in booksProcessed)
+                {
+                    tempBooks.Remove(processedBook);
+                }
+
+                tempBooks = tempBooks.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
+
+                var booksCanProcess = ((daysForScanning - (daysSpent + library.SingUpProcesDays)) * library.BooksPerDay);
+
+                var books = tempBooks.Take((int)booksCanProcess);
+
+                booksProcessed.AddRange(books.Select(x => x.Key));
+
+                if (books.Any())
+                {
+                    sb.AppendLine($"{library.Id} {books.Count()}");
+                    sb.AppendLine(string.Join(" ", books.Select(x => x.Value)));
+                }
+                else
+                {
+                    sb.AppendLine($"{library.Id} {library.Books.Count()}");
+                    sb.AppendLine(string.Join(" ", library.Books.Select(x => x.Value)));
+                }
+                daysSpent += library.SingUpProcesDays;
+            }
+
+            sb.Remove(sb.Length - 1, 1);
+            return sb.ToString();
+        }
+
+        private static string Test5()
+        {
+            var sb = new StringBuilder();
+
+            var booksReaded = new List<long>();
+
+            sb.AppendLine(libObjects.Count().ToString());
+
+            var librariesOrdered = libObjects.OrderByDescending(x => ((x.NumOfBooks * x.BooksPerDay) + x.Books.Sum(y => y.Value)) / x.SingUpProcesDays);
+
+            var booksProcessed = new List<long>();
+
+            var daysSpent = 0;
+
+            foreach (var library in librariesOrdered)
+            {
+                var tempBooks = library.Books.ToList().ToDictionary(x => x.Key, x => x.Value);
+
+                foreach (var processedBook in booksProcessed)
+                {
+                    tempBooks.Remove(processedBook);
+                }
+
+                tempBooks = tempBooks.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
+
+                var booksCanProcess = ((daysForScanning - (daysSpent + library.SingUpProcesDays)) * library.BooksPerDay);
+
+                var books = tempBooks.Take((int)booksCanProcess);
+
+                booksProcessed.AddRange(books.Select(x => x.Key));
+
+                if (books.Any())
+                {
+                    sb.AppendLine($"{library.Id} {books.Count()}");
+                    sb.AppendLine(string.Join(" ", books.Select(x => x.Value)));
+                }
+                else
+                {
+                    sb.AppendLine($"{library.Id} {library.Books.Count()}");
+                    sb.AppendLine(string.Join(" ", library.Books.Select(x => x.Value)));
+                }
                 daysSpent += library.SingUpProcesDays;
             }
 
