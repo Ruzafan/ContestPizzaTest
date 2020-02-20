@@ -1,25 +1,88 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Text;
 
 namespace GoogleContestFirstRound
 {
     public class Program
     {
+        public static List<string> sources = new List<string>
+        {
+            "a_example",
+            "b_read_on",
+            "c_incunabula",
+            "d_tough_choices",
+            "e_so_many_books",
+            "f_libraries_of_the_world"
+        };
+
         public static long books { get; set; }
         public static long libraries { get; set; }
         public static long daysForScanning { get; set; }
-        public static Dictionary<long,long> scoreOfBooks { get; set; }
+        public static Dictionary<long, long> scoreOfBooks { get; set; }
         public static List<Library> libObjects { get; set; }
 
         static void Main(string[] args)
         {
-            libObjects = new List<Library>();
-            scoreOfBooks = new Dictionary<long, long>();
-            Console.WriteLine("App started, add the file path :)");
-            string fileNum = Console.ReadLine();
-            string fileName = GetFile(fileNum);
-            ReadFileAndSetProps(fileName);
+            foreach (var item in sources)
+            {
+                libObjects = new List<Library>();
+                scoreOfBooks = new Dictionary<long, long>();
+
+                ReadFileAndSetProps(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), $"{item}.txt"));
+
+                var test1 = Test1();
+                WriteTest($"{item}_solution1.txt", test1);
+            }
+        }
+
+        private static void WriteTest(string path, string text)
+        {
+            string docPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            File.WriteAllText(Path.Combine(docPath, "HashCode", path), text);
+        }
+
+        private static string Test1()
+        {
+            var sb = new StringBuilder();
+
+            var booksReaded = new List<long>();
+
+            sb.AppendLine(libObjects.Count().ToString());
+
+            var librariesOrdered = libObjects.OrderByDescending(x => (x.BooksPerDay - x.SingUpProcesDays));
+
+            foreach (var library in librariesOrdered)
+            {
+                library.Books = library.Books.OrderBy(x => new Random().Next(0, library.Books.Count())).ToDictionary(x => x.Key, x => x.Value);
+
+                sb.AppendLine($"{library.Id} {library.NumOfBooks}");
+                sb.AppendLine(string.Join(" ", library.Books.Values));
+            }
+
+            //var day = 0;
+            //while (day < daysForScanning)
+            //{
+            //    var library = librariesOrdered.FirstOrDefault();
+            //    if (library.IsSignedUp)
+            //    {
+
+            //    }
+            //    else
+            //    {
+            //        library.IsSigningUp = true;
+            //    }
+            //}
+
+            //for (int i = 0; i < daysForScanning; i++)
+            //{
+
+
+            //}
+
+            return sb.ToString();
         }
 
         private static string GetFile(string fileNum)
@@ -28,6 +91,8 @@ namespace GoogleContestFirstRound
             {
                 case "1":
                     return Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "/a_example.txt";
+                case "2":
+                    return Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "/b_read_on.txt";
             }
             return "";
         }
@@ -42,17 +107,19 @@ namespace GoogleContestFirstRound
             line = file.ReadLine();
             SetVarsScoreBooks(line);
 
-
-
+            long libraryId = default;
             while ((line = file.ReadLine()) != null)
             {
-                var libObj = new Library();
+                if (string.IsNullOrEmpty(line)) continue;
+                var libObj = new Library(libraryId);
                 SetVarOfLibrary(line, libObj);
                 line = file.ReadLine();
                 SetVarsOfBooks(line, libObj);
                 libObjects.Add(libObj);
+
+                libraryId++;
             }
-            
+
             file.Close();
         }
 
@@ -70,7 +137,7 @@ namespace GoogleContestFirstRound
                 else if (c != '\n')
                 {
                     val = long.Parse(currentVal);
-                    scoreOfBooks.Add(qtt,val);
+                    scoreOfBooks.Add(qtt, val);
                     currentVal = "";
                     qtt++;
                 }
@@ -93,7 +160,7 @@ namespace GoogleContestFirstRound
                 else if (c != '\n')
                 {
                     val = long.Parse(currentVal);
-                    libObj.Books.Add(qtt,val);
+                    libObj.Books.Add(qtt, val);
                     currentVal = "";
                     qtt++;
                 }
@@ -104,54 +171,20 @@ namespace GoogleContestFirstRound
 
         private static void SetVarOfLibrary(string line, Library libObj)
         {
-            int pos = 0;
-            long[] info = new long[3];
-            string currentVal = string.Empty;
-            foreach (char c in line)
-            {
-                if (c != ' ' && c != '\n')
-                {
-                    currentVal += c;
-                }
-                else if (c != '\n')
-                {
-                    info[pos] = long.Parse(currentVal);
-                    currentVal = "";
-                    pos++;
-                }
-            }
+            var values = line.Split(" ");
 
-            info[pos] = long.Parse(currentVal);
-
-            libObj.NumOfBooks = info[0];
-            libObj.SingUpProcesDays = info[1];
-            libObj.BooksPerDay = info[2];
+            libObj.NumOfBooks = long.Parse(values[0]);
+            libObj.SingUpProcesDays = long.Parse(values[1]);
+            libObj.BooksPerDay = long.Parse(values[2]);
         }
 
         private static void SetVarsLine1(string line)
         {
-            int pos = 0;
-            long[] info = new long[3];
-            string currentVal = string.Empty;
-            foreach (char c in line)
-            {
-                if (c != ' ' && c != '\n')
-                {
-                    currentVal += c;
-                }
-                else if (c != '\n')
-                {
-                    info[pos] = long.Parse(currentVal);
-                    pos++;
-                    currentVal = string.Empty;
-                }
-            }
-            
-            info[pos] = long.Parse(currentVal);
+            var values = line.Split(" ");
 
-            books = info[0];
-            libraries = info[1];
-            daysForScanning = info[2];
+            books = long.Parse(values[0]);
+            libraries = long.Parse(values[1]);
+            daysForScanning = long.Parse(values[2]);
         }
     }
 }
