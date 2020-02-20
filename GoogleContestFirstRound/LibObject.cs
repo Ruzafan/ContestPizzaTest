@@ -9,7 +9,7 @@ namespace GoogleContestFirstRound
         public long Id { get; set; }
         public long NumOfBooks { get; set; }
 
-        public long SingUpProcesDays { get; set; }
+        public int SingUpProcesDays { get; set; }
 
         public long BooksPerDay { get; set; }
 

@@ -35,6 +35,9 @@ namespace GoogleContestFirstRound
 
                 var test1 = Test1();
                 WriteTest($"{item}_solution1.txt", test1);
+
+                var test2 = Test2();
+                WriteTest($"{item}_solution2.txt", test2);
             }
         }
 
@@ -66,6 +69,56 @@ namespace GoogleContestFirstRound
             //while (day < daysForScanning)
             //{
             //    var library = librariesOrdered.FirstOrDefault();
+            //    if (library.IsSignedUp)
+            //    {
+
+            //    }
+            //    else
+            //    {
+            //        library.IsSigningUp = true;
+            //    }
+            //}
+
+            //for (int i = 0; i < daysForScanning; i++)
+            //{
+
+
+            //}
+
+            return sb.ToString();
+        }
+
+        private static string Test2()
+        {
+            var sb = new StringBuilder();
+
+            var booksReaded = new List<long>();
+
+            sb.AppendLine(libObjects.Count().ToString());
+
+            var librariesOrdered = libObjects.OrderByDescending(x => (x.NumOfBooks * x.BooksPerDay) - x.SingUpProcesDays);
+
+            var daysSpent = 0;
+
+            foreach (var library in librariesOrdered)
+            {
+                library.Books = library.Books.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
+
+                var booksCanProcess = (daysForScanning - (daysSpent - library.SingUpProcesDays) * library.BooksPerDay) - library.Books.Count();
+
+                var books = library.Books.Take((int)booksCanProcess);
+
+                sb.AppendLine($"{library.Id} {books.Count()}");
+                sb.AppendLine(string.Join(" ", books.Select(x => x.Value)));
+
+                daysSpent += library.SingUpProcesDays;
+            }
+
+            //var day = 0;
+            //while (day < daysForScanning)
+            //{
+            //    var library = librariesOrdered.FirstOrDefault(x => x.IsSignedUp);
+
             //    if (library.IsSignedUp)
             //    {
 
@@ -174,7 +227,7 @@ namespace GoogleContestFirstRound
             var values = line.Split(" ");
 
             libObj.NumOfBooks = long.Parse(values[0]);
-            libObj.SingUpProcesDays = long.Parse(values[1]);
+            libObj.SingUpProcesDays = int.Parse(values[1]);
             libObj.BooksPerDay = long.Parse(values[2]);
         }
 
@@ -184,7 +237,7 @@ namespace GoogleContestFirstRound
 
             books = long.Parse(values[0]);
             libraries = long.Parse(values[1]);
-            daysForScanning = long.Parse(values[2]);
+            daysForScanning = long.Parse(values[2]) - 1;
         }
     }
 }
