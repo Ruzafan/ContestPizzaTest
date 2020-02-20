@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace GoogleContestTest
 {
@@ -17,6 +18,39 @@ namespace GoogleContestTest
             string path = Console.ReadLine();
             ReadFileAndSetProps(path);
             Console.WriteLine("File readed.");
+
+            //MethodV1();
+            MethodV2();
+        }
+
+        private static void MethodV2()
+        {
+            //Too slow
+            Dictionary<long, int> values = new Dictionary<long, int>();
+            int qtt = 0;
+            foreach (var item in _sliceQtt)
+            {
+                values.Add(qtt, item);
+                qtt++;
+            }
+            values = values.OrderBy(q => q.Value).ToDictionary(x => x.Key, x => x.Value);
+            long bestValue = 0;
+            List<int> lista = _sliceQtt.ToList();
+            for (long i = 1; i <= _diferentTypesOfPizza; i++)
+            {
+                long v = MejorSuma(i, lista);
+                if (v > bestValue)
+                {
+                    bestValue = v;
+                    if (bestValue == _maxiumSlices)
+                        break;
+                }
+            }
+            Console.WriteLine(bestValue);
+        }
+
+        private static void MethodV1()
+        {
             Dictionary<long, int> values = new Dictionary<long, int>();
             int qtt = 0;
             foreach (var item in _sliceQtt)
@@ -26,9 +60,9 @@ namespace GoogleContestTest
             }
             values = values.OrderBy(q => q.Value).ToDictionary(x => x.Key, x => x.Value);
             Dictionary<long, int> result = new Dictionary<long, int>();
-            for (long i = _diferentTypesOfPizza-1; i >= 0; i--)
+            for (long i = _diferentTypesOfPizza - 1; i >= 0; i--)
             {
-                GetNext(values[i], result,i);
+                GetNext(values[i], result, i);
             }
 
             string docPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
@@ -39,7 +73,7 @@ namespace GoogleContestTest
             }
         }
 
-        private static void GetNext(int v, Dictionary<long, int> result,long currPos)
+        private static void GetNext(int v, Dictionary<long, int> result, long currPos)
         {
             long slices = result.Values.Sum();
             if (slices < _maxiumSlices)
@@ -47,11 +81,11 @@ namespace GoogleContestTest
                 result.Add(currPos, v);
             }
 
-            if(result.Values.Sum() > _maxiumSlices)
+            if (result.Values.Sum() > _maxiumSlices)
             {
                 result.Remove(currPos);
             }
-            
+
         }
 
         private static void ReadFileAndSetProps(string path)
@@ -118,6 +152,27 @@ namespace GoogleContestTest
             _sliceQtt[count] = qtt;
             sliceqtt = string.Empty;
 
+        }
+
+        public static int MejorSuma(long numero, List<int> lista)
+        {
+            var combinaciones = lista.Combinaciones(numero);
+            List<Task> tasks = new List<Task>();
+            int maxsuma = 0;
+            foreach (var c in combinaciones)
+            {
+                var task = Task.Run(() =>
+                {
+                    int sumaParcial = c.Sum();
+                    if (sumaParcial > maxsuma && sumaParcial <= _maxiumSlices)
+                    {
+                        maxsuma = sumaParcial;
+                    }
+                });
+                tasks.Add(task);
+            }
+            Task.WaitAll(tasks.ToArray());
+            return maxsuma;
         }
     }
 }

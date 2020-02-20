@@ -6,3 +6,5 @@
 /obj
 /.vs/GoogleContestTest/v16/Server/sqlite3
 /.vs/GoogleContestTest
+/GoogleContestFirstRound/bin/Debug/netcoreapp3.1
+/GoogleContestFirstRound/obj
